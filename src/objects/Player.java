@@ -4,7 +4,6 @@ public class Player {
     private String name;
     private String nickname;
     private int totalPoints;
-    private int roundPoints;
     private long totalTime;
     private long fastestPlayTime;
     
@@ -32,12 +31,6 @@ public class Player {
 	public void setTotalPoints(int totalPoints) {
 		this.totalPoints = totalPoints;
 	}
-	public int getRoundPoints() {
-		return roundPoints;
-	}
-	public void setRoundPoints(int roundPoints) {
-		this.roundPoints = roundPoints;
-	}
 	public long getTotalTime() {
 		return totalTime;
 	}
@@ -49,6 +42,12 @@ public class Player {
 	}
 	public void setFastestPlayTime(long fastestPlayTime) {
 		this.fastestPlayTime = fastestPlayTime;
+	}
+
+	@Override
+	public String toString() {
+		return "Player [name=" + name + ", nickname=" + nickname + ", totalPoints=" + totalPoints + ", totalTime="
+				+ totalTime + ", fastestPlayTime=" + fastestPlayTime + "]";
 	}
 
 }
