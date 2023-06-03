@@ -7,9 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+
 
 public class PlayGenius extends JFrame {
     private boolean gameStarted;
@@ -72,7 +70,6 @@ public class PlayGenius extends JFrame {
         
         JButton speedButton = new JButton("+");
         speedButton.setFont(new Font("Arial",Font.BOLD, 40));
-
         speedButton.setBounds(254, 189, 37, 29);
         getContentPane().add(speedButton);
         speedButton.addActionListener(new ActionListener() {
@@ -85,24 +82,28 @@ public class PlayGenius extends JFrame {
         		speedLabel.setText("Velocidade: "  + speedGame);
         	}
         });
+        
 
-       // frame.setLayout(new BorderLayout());
+        JButton starterChampionshipButton = new JButton("Iniciar campeonato");
+        starterChampionshipButton.setBounds(192, 350, 170, 29);
+        starterChampionshipButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+				new PlayerRegistration().setVisible(true); 
+        		
+        	}
+        });
+        getContentPane().add(starterChampionshipButton);
+        
+        JButton shutChampionShipButton = new JButton("Encerrar campeonato");
+        shutChampionShipButton.setBounds(192, 381, 170, 29);
+        getContentPane().add(shutChampionShipButton);
+        
+        JLabel gameScoreLabel = new JLabel("Placar :");
+        gameScoreLabel.setBounds(510, 43, 86, 16);
+        getContentPane().add(gameScoreLabel);
 
-//        JPanel buttonPanel = new JPanel();
-//        startButton = new JButton("Iniciar Campeonato");
-////        startButton.addActionListener(this);
-//        buttonPanel.add(startButton);
-//
-//        endButton = new JButton("Encerrar Campeonato");
-////        endButton.addActionListener(this);
-//        buttonPanel.add(endButton);
-//
-//        playerTurnButton = new JButton("Iniciar Vez do Jogador");
-////        playerTurnButton.addActionListener(this);
-//        buttonPanel.add(playerTurnButton);
-//
-//        scoreLabel = new JLabel("Placar");
-//        buttonPanel.add(scoreLabel);
+
+
 
     }
 
@@ -129,9 +130,18 @@ public class PlayGenius extends JFrame {
 //        }
 //    }
 
-    public static void main(String[] args) {
-    	new PlayGenius();
-    }
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					PlayGenius frame = new PlayGenius();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }
 
 

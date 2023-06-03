@@ -44,6 +44,8 @@ public class Player {
 		this.fastestPlayTime = fastestPlayTime;
 	}
 
+	
+    
 	@Override
 	public String toString() {
 		return "Player [name=" + name + ", nickname=" + nickname + ", totalPoints=" + totalPoints + ", totalTime="
