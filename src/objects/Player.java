@@ -1,24 +1,16 @@
 package objects;
 
 public class Player {
-    private String name;
     private String nickname;
     private int totalPoints;
     private long totalTime;
     private long fastestPlayTime;
     
-	public Player(String name, String nickname) {
+	public Player(String nickname) {
 		super();
-		this.name = name;
 		this.nickname = nickname;
 	}
 	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getNickname() {
 		return nickname;
 	}
@@ -48,8 +40,7 @@ public class Player {
     
 	@Override
 	public String toString() {
-		return "Player [name=" + name + ", nickname=" + nickname + ", totalPoints=" + totalPoints + ", totalTime="
-				+ totalTime + ", fastestPlayTime=" + fastestPlayTime + "]";
-	}
+		return  nickname;
 
+	}
 }

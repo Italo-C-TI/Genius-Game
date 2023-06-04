@@ -1,6 +1,5 @@
 package view;
 
-
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -33,7 +32,7 @@ public class PlayerRegistration extends JFrame {
     ArrayList<Player> players = new ArrayList<Player>();
 
 
-	public PlayerRegistration() {
+	public PlayerRegistration(ChampionShip championship) {
 		setResizable(false);
 		setTitle("Novo Campeonato");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -48,7 +47,6 @@ public class PlayerRegistration extends JFrame {
 		lblNewLabel.setForeground(UIManager.getColor("Button.highlight"));
 		lblNewLabel.setBounds(10, 11, 143, 25);
 		contentPane.add(lblNewLabel);
-		
 		
 		JTextField titleChampionshipText = new JTextField();
 		titleChampionshipText.setBounds(165, 10, 130, 26);
@@ -65,16 +63,13 @@ public class PlayerRegistration extends JFrame {
 		nicknameLabel.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 13));
 		nicknameLabel.setBounds(20, 67, 106, 14);
 		contentPane.add(nicknameLabel);
-		
-		
+			
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(20, 93, 267, 73);
 		contentPane.add(scrollPane);	
 		JTextArea playersTextArea  = new JTextArea();
 		scrollPane.setViewportView(playersTextArea);
-		
-
-		
+			
 		JButton registerButton = new JButton("Cadastrar");
 		registerButton.setForeground(UIManager.getColor("CheckBoxMenuItem.acceleratorSelectionForeground"));
 		registerButton.addActionListener(new ActionListener() {
@@ -96,23 +91,17 @@ public class PlayerRegistration extends JFrame {
 		        		return;
 		        	}
 					
-			         for(String player : listPlayersText){
-			        	 	String[] formatPlayer = player.split("/");
-							String name = formatPlayer[0];
-							String nickname = "Nenhum";
-							
-							if(formatPlayer.length > 1) {
-								nickname = formatPlayer[1];
-							}
-							
-							players.add(new Player(name, nickname));	
-			              
-			             System.out.println(player);    
-		
-			           
+			         for(String nickname : listPlayersText){
+						players.add(new Player(nickname));		
 			        }
-			        new ChampionShip(titleChampionshipText.getText(),players);
-			        JOptionPane.showMessageDialog(null, "Campeonato criado com sucesso!");
+			         System.out.println(players);
+			         
+			        championship.setTitle(titleChampionshipText.getText().trim());
+			        championship.setPlayers(players);
+			         
+			        System.out.println(championship.toString());    
+			       
+			        JOptionPane.showMessageDialog(null, "Campeonato criado com sucesso!");	
 			    	dispose();
 					
 		        } catch (ArrayIndexOutOfBoundsException err) {
@@ -120,9 +109,9 @@ public class PlayerRegistration extends JFrame {
 		        }
 		            
 			}
-			
-			
+				
 		});
+		
 		registerButton.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 16));
 		registerButton.setBounds(299, 93, 95, 23);
 		contentPane.add(registerButton);
@@ -143,18 +132,14 @@ public class PlayerRegistration extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("Um jogador por linha");
 		lblNewLabel_1.setForeground(UIManager.getColor("Button.select"));
 		lblNewLabel_1.setBounds(222, 42, 157, 16);
-		contentPane.add(lblNewLabel_1);
-		
-
+		contentPane.add(lblNewLabel_1);	
 	}
 
-	
-  
-	public static void main(String[] args) {
+	public static void main(String[] args, ChampionShip championship) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					PlayerRegistration frame = new PlayerRegistration();
+					PlayerRegistration frame = new PlayerRegistration(championship);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

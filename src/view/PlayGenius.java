@@ -1,23 +1,26 @@
 package view;
 import javax.swing.*;
 
-import objects.Player;
+import objects.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 
 public class PlayGenius extends JFrame {
-    private boolean gameStarted;
-    private int speedGame;
+    private static final long serialVersionUID = 1L;
+	private Boolean gameStarted;
+    private Integer speedGame;
     ArrayList<Integer> colorsList = new ArrayList<Integer>();
-    ArrayList<Player> players = new ArrayList<Player>();
     
     public PlayGenius() {
         gameStarted = false;
         speedGame = 1;
+        ChampionShip championship = new ChampionShip(null, null);
 
 
         setVisible(true);
@@ -88,8 +91,8 @@ public class PlayGenius extends JFrame {
         starterChampionshipButton.setBounds(192, 350, 170, 29);
         starterChampionshipButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-				new PlayerRegistration().setVisible(true); 
-        		
+				new PlayerRegistration(championship).setVisible(true); 
+				
         	}
         });
         getContentPane().add(starterChampionshipButton);
@@ -98,11 +101,15 @@ public class PlayGenius extends JFrame {
         shutChampionShipButton.setBounds(192, 381, 170, 29);
         getContentPane().add(shutChampionShipButton);
         
-        JLabel gameScoreLabel = new JLabel("Placar :");
-        gameScoreLabel.setBounds(510, 43, 86, 16);
+        JLabel gameScoreLabel = new JLabel("Placar : \n");
+        gameScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        gameScoreLabel.setBounds(477, 43, 170, 34);
         getContentPane().add(gameScoreLabel);
-
-
+        
+        JLabel gameScoreResult = new JLabel(championship.toString());
+        gameScoreResult.setHorizontalAlignment(SwingConstants.LEFT);
+        gameScoreResult.setBounds(477, 43, 89, 100);
+        getContentPane().add(gameScoreResult);
 
 
     }

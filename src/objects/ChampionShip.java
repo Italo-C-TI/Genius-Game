@@ -44,6 +44,31 @@ public class ChampionShip {
 		this.date = date;
 	}
 
+	public String getScore() {
+		String playersWithTotalPoints = "";
+		 for(Player player : players){
+			 playersWithTotalPoints +=  player.getNickname() + " - " + player.getTotalPoints() + "\n";
+		 }
+		 
+		return playersWithTotalPoints;
+
+	}
+	public String getPlayersNickName() {
+		String allPlayersNickName = "";
+		 for(Player player : players){
+			 allPlayersNickName +="\n" +  player.getNickname();
+		 }
+		 
+		return allPlayersNickName;
+
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Campeonato " + title + " ocorrido no dia " + date + " com os jogadores: " + getPlayersNickName();
+	}
+
 	public List<Player> getPlayers() {
 		return players;
 	}
