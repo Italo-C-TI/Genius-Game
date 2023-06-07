@@ -1,5 +1,6 @@
 package view;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 import objects.*;
 
@@ -7,20 +8,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 
 public class PlayGenius extends JFrame {
-    private static final long serialVersionUID = 1L;
-	private Boolean gameStarted;
-    private Integer speedGame;
+	private static final long serialVersionUID = 1L;
+	//private Boolean gameStarted;
+    private Integer speedGame;;
     ArrayList<Integer> colorsList = new ArrayList<Integer>();
+    private JTable table;
+	public JLabel championshipLabel = new JLabel("Campeonato: ");
+	
+	@SuppressWarnings("serial")
+	public DefaultTableModel model = new DefaultTableModel(){ public boolean isCellEditable(int rowIndex, int mColIndex){ return false; } };
     
     public PlayGenius() {
-        gameStarted = false;
+       // gameStarted = false;
         speedGame = 1;
-        ChampionShip championship = new ChampionShip(null, null);
+        Championship championship = new Championship(null, null);
+        ChampionshipRegistration championshipRegistration = new ChampionshipRegistration(championship); 
 
 
         setVisible(true);
@@ -86,13 +91,12 @@ public class PlayGenius extends JFrame {
         	}
         });
         
-
         JButton starterChampionshipButton = new JButton("Iniciar campeonato");
+
         starterChampionshipButton.setBounds(192, 350, 170, 29);
         starterChampionshipButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-				new PlayerRegistration(championship).setVisible(true); 
-				
+        		showRegisterChamphioship(championshipRegistration);
         	}
         });
         getContentPane().add(starterChampionshipButton);
@@ -106,36 +110,32 @@ public class PlayGenius extends JFrame {
         gameScoreLabel.setBounds(477, 43, 170, 34);
         getContentPane().add(gameScoreLabel);
         
-        JLabel gameScoreResult = new JLabel(championship.toString());
-        gameScoreResult.setHorizontalAlignment(SwingConstants.LEFT);
-        gameScoreResult.setBounds(477, 43, 89, 100);
-        getContentPane().add(gameScoreResult);
-
-
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setEnabled(false);
+        scrollPane.setBounds(477, 89, 205, 219);
+        getContentPane().add(scrollPane);
+        
+        championshipLabel.setBounds(20, 23, 433, 16);
+        getContentPane().add(championshipLabel);
+        
+        table = new JTable();
+        scrollPane.setViewportView(table);
+        
+        Object[] columns = {"Id","Nome","Pontos"};
+        
+        model.setColumnIdentifiers(columns);
+        table.setModel(model);
+        table.setForeground(Color.black);
+        table.setRowHeight(30);
+        table.setEnabled(false);
+        
     }
 
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == startButton) {
-//            if (!gameStarted) {
-//                // Lógica para iniciar o campeonato
-//                gameStarted = true;
-//                players.clear();
-//                // ...
-//            }
-//        } else if (e.getSource() == endButton) {
-//            if (gameStarted) {
-//                // Lógica para encerrar o campeonato e exibir o relatório
-//                gameStarted = false;
-//                // ...
-//            }
-//        } else if (e.getSource() == playerTurnButton) {
-//            if (gameStarted && currentPlayer != null) {
-//                // Lógica para iniciar a vez do jogador atual
-//                // ...
-//            }
-//        }
-//    }
+        
+    public void showRegisterChamphioship(ChampionshipRegistration championshipRegistration) {
+    	championshipRegistration.showScreenPlayGenius(this);	
+    }
+    
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
