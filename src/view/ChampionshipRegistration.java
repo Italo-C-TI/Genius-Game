@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -63,6 +62,9 @@ public class ChampionshipRegistration extends JFrame {
 		registerLabel.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 21));
 		registerLabel.setBounds(10, 48, 204, 25);
 		contentPane.add(registerLabel);
+		
+        JTextField nicknamePlayerText = new JTextField();
+        JTextField namePlayerText = new JTextField();
 			
 		JButton registerButton = new JButton("Cadastrar");
 		registerButton.setForeground(new Color(0, 0, 0));
@@ -70,13 +72,7 @@ public class ChampionshipRegistration extends JFrame {
 			
 			public void actionPerformed(ActionEvent e) {
 		        try {
-		        	String titleChampionship = titleChampionshipText.getText().trim();
-		        	//if(!linha.trim().equals(""))		        	
-//		        	collection.removeAll(Arrays.asList("", null));
-//		        	
-//		        	listPlayersText.removeIf(Objects::isNull);
-//		        	listPlayersText.removeIf(String::isEmpty);
-		        	
+		        	String titleChampionship = titleChampionshipText.getText().trim();		        	
 		        	if(titleChampionship.isEmpty()) {
 		        		JOptionPane.showMessageDialog(null, "É necessário por um titulo para o campeonato");
 		        		return;
@@ -96,6 +92,11 @@ public class ChampionshipRegistration extends JFrame {
 			         
 			        runOnPlayGeniusScreen(championship);
 			        JOptionPane.showMessageDialog(null, championship.toString());	
+			        
+			        titleChampionshipText.setText(null);
+	                namePlayerText.setText(null);
+	                nicknamePlayerText.setText(null);
+	                starterChampionship();
 			    	dispose();
 					
 		        } catch (ArrayIndexOutOfBoundsException err) {
@@ -140,11 +141,7 @@ public class ChampionshipRegistration extends JFrame {
 
 	        table.setCellSelectionEnabled(false);
 
-	        
-	        JTextField nicknamePlayerText = new JTextField();
-	        JTextField namePlayerText = new JTextField();
-	        
-	        // create JButtons
+	        	        
 	        JButton btnAdd = new JButton("Adicionar");
 	        btnAdd.setForeground(new Color(0, 0, 0));
 	        JButton btnDelete = new JButton("Excluir");
@@ -208,6 +205,8 @@ public class ChampionshipRegistration extends JFrame {
 	                
 	                
 	                model.addRow(row);
+	                namePlayerText.setText(null);
+	                nicknamePlayerText.setText(null);
 	            }
 	        });
 	        
@@ -275,66 +274,26 @@ public class ChampionshipRegistration extends JFrame {
 	public void runOnPlayGeniusScreen(Championship championship) {
 		List<Player> players = championship.getPlayers();
 
-    	
-//        Iterator<Player> player = players.iterator();
-//        while (player.hasNext()) {
-//        	Player s = player.next();
-//            if (s != null) {
-//            	player.
-//            	System.out.println(player.toString());
-//            }
-//        }
-        
-
 		this.playGenius.championshipLabel.setText("Campeonato: " + championship.getTitle());
 		
-       // Object[] row = new Object[3];
-		
+      		
     	for(int i = 0; i< players.size(); i++) {
     	    Object[] row = new Object[3];
             row[0] = players.get(i).getId();
             row[1] = players.get(i).getName();
             row[2] = players.get(i).getTotalPoints();
             
-//            this.playGenius.model.setValueAt(row[0], i, 0);
-//            this.playGenius.model.setValueAt(row[1], i, 1);
-//            this.playGenius.model.setValueAt(row[2], i, 2);
+
             
             System.out.println(players.get(i).getName());
             
             this.playGenius.model.addRow(row);
 	}
-    	   //this.playGenius.model.addRow(row);
-		
 
-//    	for(Player player : players) {
-//            row[0] = player.getId();
-//            row[1] = player.getName();
-//            row[2] = player.getTotalPoints();
-//            
-//            this.playGenius.model.setValueAt(row[0], player.getId(), 0);
-//            this.playGenius.model.setValueAt(row[1], player.getId(), 1);
-//            
-//            System.out.println(player.getName());
-//            
-//            this.playGenius.model.addRow(row);
-//
-//	}
 	}
 	
 	public void runOnPlayGeniusTable(Championship championship) {
 		List<Player> players = championship.getPlayers();
-
-    	
-//        Iterator<Player> player = players.iterator();
-//        while (player.hasNext()) {
-//        	Player s = player.next();
-//            if (s != null) {
-//            	player.
-//            	System.out.println(player.toString());
-//            }
-//        }
-        
 
 		this.playGenius.championshipLabel.setText("Campeonato: " + championship.getTitle());
 				
@@ -348,9 +307,15 @@ public class ChampionshipRegistration extends JFrame {
             System.out.println(players.get(i).getName());
             
             this.playGenius.model.addRow(row);
-	}
+	     }
 
 	}
+	
+	public void starterChampionship() {
+		this.playGenius.setChampionshipStarted(true);				
+	}
+
+	
 
 	
 	public static void main(String[] args, Championship championship) {

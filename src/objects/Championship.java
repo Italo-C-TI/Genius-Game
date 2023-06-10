@@ -58,6 +58,11 @@ public class Championship {
 	public String toString() {
 		return "Campeonato " + title + " criado no dia " + date + " com os jogadores: \n" + getPlayersNickName();
 	}
+	
+
+	public String details() {
+		return "Campeonato " + title + " criado no dia " + date + " com os jogadores: \n" + getPlayersNickName();
+	}
 
 	public List<Player> getPlayers() {
 		return players;
