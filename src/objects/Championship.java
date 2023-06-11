@@ -2,6 +2,8 @@ package objects;
 
 import java.util.*;
 
+import utils.Utils;
+
 
 public class Championship {
     private String id;
@@ -53,6 +55,15 @@ public class Championship {
 
 	}
 	
+	public String getTeste() {
+		StringBuffer allPlayersNickName = new StringBuffer();
+		 for(Player player : players){
+			 allPlayersNickName.append(player.toString() + "\n");
+		 }
+		return allPlayersNickName.toString();
+
+	}
+	
 	
 	@Override
 	public String toString() {
@@ -61,7 +72,7 @@ public class Championship {
 	
 
 	public String details() {
-		return "Campeonato " + title + " criado no dia " + date + " com os jogadores: \n" + getPlayersNickName();
+		return "Campeonato " + title + " criado no dia " + date + "\n" + getTeste();
 	}
 
 	public List<Player> getPlayers() {

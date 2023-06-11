@@ -63,7 +63,13 @@ public class Player {
     
 	@Override
 	public String toString() {
-		return  nickname + " - " + totalPoints ;
+		return  "------------------------------------------------\n" 
+				+ "nome: " + name + ",\n"
+				+ "apelido: " + nickname + ",\n"
+				+ "pontos: " + totalPoints + ",\n"
+				+ "tempo total: " + totalTime + ",\n"
+				+ "jogada mais rápida: " + fastestPlayTime + "\n"
+				+ "------------------------------------------------";
 
 	}
 }
