@@ -314,7 +314,6 @@ public class ChampionshipRegistration extends JFrame {
 	public void starterChampionship() {
 		this.playGenius.setChampionshipStarted(true);				
 	}
-
 	
 
 	

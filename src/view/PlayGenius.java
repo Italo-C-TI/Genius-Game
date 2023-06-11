@@ -2,8 +2,6 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Random;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import objects.*;
 
@@ -11,189 +9,28 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PlayGenius extends JFrame {
 	private static final long serialVersionUID = 1L;
 	//private Boolean gameStarted;
 	private Boolean championshipStarted = false;
-    private Integer speedGame;;
+    private Integer speedGame;
+    private Integer dificultyGame;
     private Timer patternTimer;
     private int patternIndex;
     private ArrayList<Integer> pattern;
-    public JButton redButton ;
+    private JButton redButton ;
 	private JButton blueButton;
     private JButton greenButton;
     private JButton yellowButton;
     private JTable table;
 	public JLabel championshipLabel = new JLabel("Campeonato: ");
+	private JLabel dificultyLabel;
+	private JLabel speedLabel;
 	
 	
-
-	
-    private void startPattern() {
-    	pattern = generateRandomPattern();
-    	patternIndex = 0;
-
-
-    	for (int colorIndex : pattern) {
-    	    switch (colorIndex) {
-    	        case 0:
-    	            changeColorWithDelay(redButton, Color.RED, 1000);
-    	            break;
-    	        case 1:
-    	            changeColorWithDelay(blueButton, Color.BLUE, 1000);
-    	            break;
-    	        case 2:
-    	            changeColorWithDelay(greenButton, Color.GREEN, 1000);
-    	            break;
-    	        case 3:
-    	            changeColorWithDelay(yellowButton, Color.YELLOW, 1000);
-    	            break;
-    	        default:
-    	            throw new IllegalArgumentException("Unexpected value: " + colorIndex);
-    	    }
-    	    System.err.println(colorIndex);
-
-    	    try {
-    	        TimeUnit.MILLISECONDS.sleep(1000); // Espera por 1 segundo
-    	    } catch (InterruptedException e) {
-    	        e.printStackTrace();
-    	    }
-
-    	    switch (colorIndex) {
-    	        case 0:
-    	            redButton.setBackground(null);
-    	            break;
-    	        case 1:
-    	            blueButton.setBackground(null);
-    	            break;
-    	        case 2:
-    	            greenButton.setBackground(null);
-    	            break;
-    	        case 3:
-    	            yellowButton.setBackground(null);
-    	            break;
-    	        default:
-    	            throw new IllegalArgumentException("Unexpected value: " + colorIndex);
-    	    }
-
-    	    patternIndex++;
-    	}
-
-    	// Limpar o padrão no final do loop
-    	clearPattern();
-   
-    	
-    	
-//        pattern = generateRandomPattern();
-//        patternIndex = 0;
-//                
-//        for (int colorIndex : pattern) {
-//	        try {
-//	        	switch (colorIndex) {
-//	        	case 0 :
-//			        redButton.setBackground(Color.RED);		
-//					break;
-//				case 1: 
-//					blueButton.setBackground(Color.BLUE);
-//				break;
-//				case 2:
-//					greenButton.setBackground(Color.GREEN);
-//					break;
-//				case 3:
-//					yellowButton.setBackground(Color.YELLOW);
-//					break;
-//				default:
-//					throw new IllegalArgumentException("Unexpected value: " + colorIndex);
-//				}
-//	        	System.err.println(colorIndex);
-//	        	TimeUnit.SECONDS.sleep(patternIndex + 1);	
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//	        patternIndex++;
-//
-//        }
-        
-
-//        patternTimer = new Timer(1500, new ActionListener() {
-//			@Override
-//            public void actionPerformed(ActionEvent e) {
-//                if (patternIndex < pattern.size()) {
-//                	switch (patternIndex) {
-//					case 0 :
-//						redButton.setBackground(Color.RED);	
-//						break;
-//					case 1: 
-//						blueButton.setBackground(Color.BLUE);
-//					break;
-//					case 2:
-//						greenButton.setBackground(Color.GREEN);
-//						break;
-//					case 3:
-//						yellowButton.setBackground(Color.YELLOW);
-//						break;
-//					default:
-//						throw new IllegalArgumentException("Unexpected value: " + patternIndex);
-//					}
-//                	System.err.println(patternIndex);
-//                    patternIndex++;
-//                    
-//                     clearTimer[0] = new Timer(1000, new ActionListener() {
-//                        @Override
-//                        public void actionPerformed(ActionEvent e) {
-//                        	clearPattern();
-//
-//                            if (patternIndex >= pattern.size()) {
-//                                clearTimer[0].stop();
-//                                clearPattern();
-//                            }
-//                        }
-//                    });
-//
-//                    clearTimer[0].setRepeats(false); // Executa apenas uma vez
-//                    clearTimer[0].start();
-//                } 
-//                
-//            }
-//        });
-//
-//        patternTimer.start();
- }
-    
-    private void changeColorWithDelay(final JButton button, final Color color, final int delay) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                button.setBackground(color);
-            }
-        });
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(delay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void clearPattern() {
-    	greenButton.setBackground(null);
-    	redButton.setBackground(null);
-    	yellowButton.setBackground(null);
-    	blueButton.setBackground(null);
-    }
-
-    private ArrayList<Integer> generateRandomPattern() {
-    	ArrayList<Integer> pattern = new ArrayList<>();
-        Random random = new Random();
-
-        for (int i = 0; i < 4; i++) {
-            pattern.add(random.nextInt(3));
-        }
-
-
-        return pattern;
-    }
 	
 	@SuppressWarnings("serial")
 	public DefaultTableModel model = new DefaultTableModel(){ public boolean isCellEditable(int rowIndex, int mColIndex){ return false; } };
@@ -202,6 +39,7 @@ public class PlayGenius extends JFrame {
     	getContentPane().setBackground(Color.DARK_GRAY);
        // gameStarted = false;
         speedGame = 1;
+        dificultyGame = 1;
         Championship championship = new Championship(null, null);
         ChampionshipRegistration championshipRegistration = new ChampionshipRegistration(championship); 
 
@@ -214,19 +52,36 @@ public class PlayGenius extends JFrame {
         greenButton = new JButton("Verde");
         greenButton.setContentAreaFilled(false);
         greenButton.setOpaque(true);
+        greenButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	greenButton.setBackground(Color.GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            	greenButton.setBackground(Color.WHITE);
+            }
+        });
         greenButton.setForeground(Color.GREEN);
         greenButton.setBounds(139, 213, 128, 95);
         getContentPane().add(greenButton);
         
-        redButton = new JButton("Vermelho");
+        redButton = new JButton("Vermelho");   
         redButton.setContentAreaFilled(false);
         redButton.setOpaque(true);
-        redButton.setForeground(Color.RED);
-        redButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-				redButtonThink();
-        	}
+        redButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	redButton.setBackground(Color.RED);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            	redButton.setBackground(Color.WHITE);
+            }
         });
+        redButton.setForeground(Color.RED);
         redButton.setBounds(139, 113, 128, 95);
         getContentPane().add(redButton);
         
@@ -234,6 +89,18 @@ public class PlayGenius extends JFrame {
         blueButton = new JButton("Azul");
         blueButton.setContentAreaFilled(false);
         blueButton.setOpaque(true);
+        blueButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	blueButton.setBackground(Color.BLUE);
+            	
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            	blueButton.setBackground(Color.WHITE);
+            }
+        });
         blueButton.setBorder(UIManager.getBorder("EditorPane.border"));
         blueButton.setForeground(Color.BLUE);
         blueButton.addActionListener(new ActionListener() {
@@ -246,11 +113,22 @@ public class PlayGenius extends JFrame {
         yellowButton = new JButton("Amarelo");
         yellowButton.setContentAreaFilled(false);
         yellowButton.setOpaque(true);
-        yellowButton.setForeground(Color.YELLOW);
+        yellowButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	yellowButton.setBackground(Color.YELLOW);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            	yellowButton.setBackground(Color.WHITE);
+            }
+        });
+        yellowButton.setForeground(new Color(255, 153, 51));
         yellowButton.setBounds(279, 213, 128, 95);
         getContentPane().add(yellowButton);
         
-        JButton startMatch = new JButton("Iniciar Partida");
+        JButton startMatch = new JButton("Iniciar");
         startMatch.setForeground(Color.BLACK);
         startMatch.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -261,7 +139,7 @@ public class PlayGenius extends JFrame {
         getContentPane().add(startMatch);
         
         
-        JLabel speedLabel = new JLabel("Velocidade: "  + speedGame);
+        speedLabel = new JLabel("Velocidade: "  + speedGame);
         speedLabel.setForeground(Color.WHITE);
         speedLabel.setBounds(16, 97, 86, 16);
         getContentPane().add(speedLabel);
@@ -273,12 +151,7 @@ public class PlayGenius extends JFrame {
         getContentPane().add(speedButton);
         speedButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		if(speedGame >= 3) {
-        			speedGame = 1;
-        		}else {
-        			speedGame++;
-        		}
-        		speedLabel.setText("Velocidade: "  + speedGame);
+        		handleSpeed();
         	}
         });
         
@@ -309,6 +182,26 @@ public class PlayGenius extends JFrame {
         shutChampionShipButton.setBounds(192, 381, 189, 29);
         getContentPane().add(shutChampionShipButton);
         
+        dificultyLabel = new JLabel("Dificuldade: "+ dificultyGame);
+        dificultyLabel.setForeground(Color.WHITE);
+        dificultyLabel.setBounds(16, 179, 111, 16);
+        getContentPane().add(dificultyLabel);
+        
+        JButton dificultyButton = new JButton("+");
+        dificultyButton.setFont(new Font("Arial", Font.BOLD, 40));
+        dificultyButton.setBounds(41, 208, 37, 29);
+        dificultyButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		handleDificulty();
+        	}
+        });
+        getContentPane().add(dificultyButton);
+        
+        JLabel lblVezDoJogador = new JLabel("Vez do jogador: ");
+        lblVezDoJogador.setForeground(Color.WHITE);
+        lblVezDoJogador.setBounds(20, 52, 433, 24);
+        getContentPane().add(lblVezDoJogador);
+        
         JLabel gameScoreLabel = new JLabel("Placar : \n");
         gameScoreLabel.setForeground(Color.WHITE);
         gameScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -322,7 +215,7 @@ public class PlayGenius extends JFrame {
         getContentPane().add(scrollPane);
         championshipLabel.setForeground(Color.WHITE);
         
-        championshipLabel.setBounds(20, 23, 433, 16);
+        championshipLabel.setBounds(20, 23, 433, 24);
         getContentPane().add(championshipLabel);
         
         table = new JTable();
@@ -335,14 +228,103 @@ public class PlayGenius extends JFrame {
         table.setForeground(Color.black);
         table.setRowHeight(30);
         table.setEnabled(false);
-
+        
     }
 
-	
-	public void  redButtonThink() {
-		this.redButton.setBackground(Color.red);
+    
+    private void startPattern() {
+	    pattern = generateRandomPattern();
+	    System.err.println(pattern);
+	    patternIndex = 0;
+	    final Timer[] clearTimer = new Timer[1];
+
+	    patternTimer = new Timer(2000 / speedGame, new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            if (patternIndex < pattern.size()) {
+	                int colorIndex = pattern.get(patternIndex);
+
+	                switch (colorIndex) {
+	                    case 0:
+	                        redButton.setBackground(Color.RED);
+	                        break;
+	                    case 1:
+	                        blueButton.setBackground(Color.BLUE);
+	                        break;
+	                    case 2:
+	                        greenButton.setBackground(Color.GREEN);
+	                        break;
+	                    case 3:
+	                        yellowButton.setBackground(Color.YELLOW);
+	                        break;
+	                    default:
+	                        throw new IllegalArgumentException("Unexpected value: " + colorIndex);
+	                }
+
+	                patternIndex++;
+
+	                clearTimer[0] = new Timer(1000 / speedGame, new ActionListener() {
+	                    @Override
+	                    public void actionPerformed(ActionEvent e) {
+	                        clearPattern();
+	                        clearTimer[0].stop(); 
+	                    }
+	                });
+	                
+                    if (patternIndex >= pattern.size()) {
+                    	patternTimer.stop();
+                    }
+	                
+
+	                clearTimer[0].setRepeats(false);
+	                clearTimer[0].start();
+	            }
+	        }
+	    });
+	    
+	    patternTimer.start();
 	}
-        
+    
+    private void clearPattern() {
+    	greenButton.setBackground(Color.white);
+    	redButton.setBackground(Color.white);
+    	yellowButton.setBackground(Color.white);
+    	blueButton.setBackground(Color.white);
+    }
+
+    private ArrayList<Integer> generateRandomPattern() {
+    	ArrayList<Integer> pattern = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < 4 + dificultyGame; i++) {
+            pattern.add(random.nextInt(3));
+        }
+
+
+        return pattern;
+    }
+	
+    public void handleDificulty() {
+    	if(dificultyGame >= 3) {
+			dificultyGame = 1;
+		}else {
+			dificultyGame++;
+		}
+		dificultyLabel.setText("Dificuldade: "  + dificultyGame);	
+    }
+    
+    public void handleSpeed() {
+    	if(speedGame >= 3) {
+    		speedGame = 1;
+    	}else {
+    		speedGame++;
+    	}
+    	speedLabel.setText("Velocidade: "  + speedGame);	
+    }
+    
+
+	
+	
     public void showRegisterChamphioship(ChampionshipRegistration championshipRegistration) {
     	championshipRegistration.showScreenPlayGenius(this);	
     }
