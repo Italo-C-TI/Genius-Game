@@ -1,35 +1,59 @@
 package view;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import objects.*;
-import utils.Utils;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import enums.COLORS;
+import objects.Championship;
+import utils.Utils;
 
 public class PlayGenius extends JFrame {
 	private static final long serialVersionUID = 1L;
-	// private Boolean gameStarted;
+	private Boolean gameStarted = false;
 	private Boolean championshipStarted = false;
 	private Integer speedGame;
 	private Integer dificultyGame;
 	private Timer patternTimer;
-	private int patternIndex;
+	private int currentPlayerIndex = 0;
+	private int totalPlayers = 0;
+	private int patternIndex = 0;
+	private int clickedIndex = 0;
+	private Integer currentRound;
+	private final Integer totalRounds = 3;
+	private final Integer pointsColumn = 2;
 	private ArrayList<Integer> pattern;
+	private long playStartTime;
+	Championship championship = new Championship(null, null);
+	Utils utils = new Utils();
+
 	private JButton redButton;
 	private JButton blueButton;
 	private JButton greenButton;
 	private JButton yellowButton;
 	private JTable table;
-	public JLabel championshipLabel = new JLabel("Campeonato: ");
+	private JLabel championshipLabel;
+	private JLabel roundLabel;
 	private JLabel dificultyLabel;
 	private JLabel speedLabel;
-	Utils utils = new Utils();
+	private DefaultTableCellRenderer cellRenderer;
 
 	@SuppressWarnings("serial")
 	public DefaultTableModel model = new DefaultTableModel() {
@@ -38,12 +62,11 @@ public class PlayGenius extends JFrame {
 		}
 	};
 
-	public PlayGenius() {		
+	@SuppressWarnings("serial")
+	public PlayGenius() {
 		getContentPane().setBackground(Color.DARK_GRAY);
-		// gameStarted = false;
 		speedGame = 1;
 		dificultyGame = 1;
-		Championship championship = new Championship(null, null);
 		ChampionshipRegistration championshipRegistration = new ChampionshipRegistration(championship);
 
 		setVisible(true);
@@ -52,13 +75,13 @@ public class PlayGenius extends JFrame {
 		getContentPane().setLayout(null);
 
 		greenButton = new JButton("Verde");
+		greenButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		greenButton.setContentAreaFilled(false);
 		greenButton.setOpaque(true);
 		greenButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				utils.soundButton("green");
-				greenButton.setBackground(Color.GREEN);			
+				handleClickColor(COLORS.GREEN);
 			}
 
 			@Override
@@ -72,14 +95,14 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(greenButton);
 
 		redButton = new JButton("Vermelho");
+		redButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		redButton.setContentAreaFilled(false);
 		redButton.setOpaque(true);
 		redButton.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				utils.soundButton("red");
-				redButton.setBackground(Color.RED);		
+				handleClickColor(COLORS.RED);
 			}
 
 			@Override
@@ -92,13 +115,13 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(redButton);
 
 		blueButton = new JButton("Azul");
+		blueButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		blueButton.setContentAreaFilled(false);
 		blueButton.setOpaque(true);
 		blueButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				utils.soundButton("blue");
-				blueButton.setBackground(Color.BLUE);
+				handleClickColor(COLORS.BLUE);
 			}
 
 			@Override
@@ -111,13 +134,13 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(blueButton);
 
 		yellowButton = new JButton("Amarelo");
+		yellowButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		yellowButton.setContentAreaFilled(false);
 		yellowButton.setOpaque(true);
 		yellowButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				utils.soundButton("yellow");
-				yellowButton.setBackground(Color.YELLOW);
+				handleClickColor(COLORS.YELLOW);
 			}
 
 			@Override
@@ -130,9 +153,14 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(yellowButton);
 
 		JButton startMatch = new JButton("Iniciar");
+		startMatch.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		startMatch.setForeground(Color.BLACK);
 		startMatch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(gameStarted) {
+					JOptionPane.showMessageDialog(null, "Uma jogada está em andamento, termine para iniciar a proxima");
+					return;
+				}
 				startPattern();
 			}
 		});
@@ -140,8 +168,9 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(startMatch);
 
 		speedLabel = new JLabel("Velocidade: " + speedGame);
+		speedLabel.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		speedLabel.setForeground(Color.WHITE);
-		speedLabel.setBounds(16, 97, 86, 16);
+		speedLabel.setBounds(16, 97, 98, 16);
 		getContentPane().add(speedLabel);
 		setBounds(300, 200, 700, 500);
 
@@ -156,6 +185,7 @@ public class PlayGenius extends JFrame {
 		});
 
 		JButton starterChampionshipButton = new JButton("Novo campeonato");
+		starterChampionshipButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		starterChampionshipButton.setForeground(Color.BLACK);
 
 		starterChampionshipButton.setBounds(192, 350, 189, 29);
@@ -172,18 +202,20 @@ public class PlayGenius extends JFrame {
 		getContentPane().add(starterChampionshipButton);
 
 		JButton shutChampionShipButton = new JButton("Encerrar campeonato");
+		shutChampionShipButton.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		shutChampionShipButton.setBackground(Color.WHITE);
 		shutChampionShipButton.setForeground(Color.BLACK);
 
 		shutChampionShipButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				shutChampionship(championship);
+				shutChampionship();
 			}
 		});
 		shutChampionShipButton.setBounds(192, 381, 189, 29);
 		getContentPane().add(shutChampionShipButton);
 
 		dificultyLabel = new JLabel("Dificuldade: " + dificultyGame);
+		dificultyLabel.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		dificultyLabel.setForeground(Color.WHITE);
 		dificultyLabel.setBounds(16, 179, 111, 16);
 		getContentPane().add(dificultyLabel);
@@ -198,28 +230,25 @@ public class PlayGenius extends JFrame {
 		});
 		getContentPane().add(dificultyButton);
 
-		JLabel lblVezDoJogador = new JLabel("Vez do jogador: ");
-		lblVezDoJogador.setForeground(Color.WHITE);
-		lblVezDoJogador.setBounds(20, 52, 433, 24);
-		getContentPane().add(lblVezDoJogador);
-
 		JLabel gameScoreLabel = new JLabel("Placar : \n");
+		gameScoreLabel.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		gameScoreLabel.setForeground(Color.WHITE);
 		gameScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		gameScoreLabel.setBounds(477, 43, 170, 34);
+		gameScoreLabel.setBounds(440, 69, 86, 34);
 		getContentPane().add(gameScoreLabel);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBackground(Color.GRAY);
-		scrollPane.setEnabled(false);
-		scrollPane.setBounds(477, 89, 205, 219);
-		getContentPane().add(scrollPane);
+		championshipLabel = new JLabel("Campeonato: ");
+		championshipLabel.setFont(new Font("Arial Black", Font.BOLD, 20));
 		championshipLabel.setForeground(Color.WHITE);
-
-		championshipLabel.setBounds(20, 23, 433, 24);
+		championshipLabel.setBounds(20, 23, 653, 47);
 		getContentPane().add(championshipLabel);
 
 		table = new JTable();
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBackground(Color.GRAY);
+		scrollPane.setEnabled(false);
+		scrollPane.setBounds(440, 113, 233, 297);
+		getContentPane().add(scrollPane);
 		scrollPane.setViewportView(table);
 
 		Object[] columns = { "Id", "Nome", "Pontos" };
@@ -230,16 +259,44 @@ public class PlayGenius extends JFrame {
 		table.setRowHeight(30);
 		table.setEnabled(false);
 
+		roundLabel = new JLabel("Round: ");
+		roundLabel.setFont(new Font("Arial Black", Font.PLAIN, 16));
+		roundLabel.setForeground(Color.WHITE);
+		roundLabel.setBounds(16, 351, 164, 47);
+		getContentPane().add(roundLabel);
+
+		cellRenderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+						column);
+
+				if (row == currentPlayerIndex) {
+					component.setBackground(Color.RED);
+				} else {
+					component.setBackground(table.getBackground());
+				}
+
+				return component;
+			}
+		};
+
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+		}
+
 	}
 
 	private void startPattern() {
-		if(!championshipStarted) {
+		if (!championshipStarted) {
 			JOptionPane.showMessageDialog(null, "É preciso iniciar um campeonato para jogar!");
 			return;
 		}
-		
-		pattern = utils.generateRandomPattern(dificultyGame);
-		System.err.println(pattern);
+		clickedIndex = 0;
+		gameStarted = true;
+		pattern = utils.generateRandomPattern(currentRound, dificultyGame);
+		System.out.println(pattern);
 		patternIndex = 0;
 		final Timer[] clearTimer = new Timer[1];
 
@@ -281,6 +338,7 @@ public class PlayGenius extends JFrame {
 					});
 
 					if (patternIndex >= pattern.size()) {
+						playStartTime = System.currentTimeMillis();
 						patternTimer.stop();
 					}
 
@@ -298,6 +356,39 @@ public class PlayGenius extends JFrame {
 		redButton.setBackground(Color.white);
 		yellowButton.setBackground(Color.white);
 		blueButton.setBackground(Color.white);
+	}
+
+	private void verifyNextPlayer(Boolean isSuccess) {
+		gameStarted = false;
+		clearPattern();
+		long endTime =  System.currentTimeMillis();
+		Integer elapsedTime = (int) ((endTime - playStartTime) / 1000);
+		championship.getPlayers().get(currentPlayerIndex).setAddTime(elapsedTime);
+		championship.getPlayers().get(currentPlayerIndex).setFastestPlayTime(elapsedTime);
+		currentPlayerIndex++;
+
+		if (currentPlayerIndex >= totalPlayers) {
+			currentPlayerIndex = 0;
+			if (currentRound >= totalRounds) {
+				shutChampionship();
+				return;
+			}
+			currentRound++;
+			setCurrentRoundLabelText(currentRound);
+		}
+
+		if (!isSuccess) {
+			JOptionPane.showMessageDialog(null, "Você errou, agora é a vez do jogador "
+					+ championship.getPlayers().get(currentPlayerIndex).getName());
+		} else {
+			JOptionPane.showMessageDialog(null, "Você acertou, agora é a vez do jogador "
+					+ championship.getPlayers().get(currentPlayerIndex).getName());
+		}
+
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+		}
+
 	}
 
 	public void handleDificulty() {
@@ -318,10 +409,62 @@ public class PlayGenius extends JFrame {
 		speedLabel.setText("Velocidade: " + speedGame);
 	}
 
+	public void shutChampionship() {
+		if (championshipStarted) {
+			this.championshipStarted = false;
+			this.totalPlayers = 0;
+			this.currentRound = 1;
+			this.championshipLabel.setText("Campeonato: ");
+			this.roundLabel.setText("Round: ");
+			this.model.setRowCount(0);
+			JOptionPane.showMessageDialog(null, this.championship.details());
+			championship.cleanChampionship();
+			JOptionPane.showMessageDialog(null, "Campeonato Encerrado com sucesso!");
+			return;
+		}
+
+		JOptionPane.showMessageDialog(null, "Não há campeonato iniciado para se encerrar!");
+
+	}
+
+	public void handleClickColor(COLORS typeColor) {
+		utils.soundButton(typeColor.getColorName());
+
+		if (typeColor.getColorName() == "red") {
+			redButton.setBackground(Color.RED);
+		}
+		if (typeColor.getColorName() == "blue") {
+			blueButton.setBackground(Color.BLUE);
+		}
+		if (typeColor.getColorName() == "green") {
+			greenButton.setBackground(Color.GREEN);
+		}
+		if (typeColor.getColorName() == "yellow") {
+			yellowButton.setBackground(Color.YELLOW);
+		}
+
+		if (gameStarted) {
+			boolean isCorrectColor = utils.checkClickedColor(typeColor.getIndexColor(), pattern, clickedIndex);
+			if (isCorrectColor) {
+				championship.getPlayers().get(currentPlayerIndex).addPoints(1);
+				if (clickedIndex + 1 >= pattern.size()) {
+					verifyNextPlayer(true);
+				}
+
+				model.setValueAt(championship.getPlayers().get(currentPlayerIndex).getTotalPoints(), currentPlayerIndex,
+						pointsColumn);
+				System.out.println("acertou");
+			} else {
+				System.out.println("errou");
+				verifyNextPlayer(false);
+			}
+			clickedIndex++;
+		}
+	}
+
 	public void showRegisterChamphioship(ChampionshipRegistration championshipRegistration) {
 		championshipRegistration.showScreenPlayGenius(this);
 	}
-
 
 	public Boolean getChampionshipStarted() {
 		return championshipStarted;
@@ -331,21 +474,26 @@ public class PlayGenius extends JFrame {
 		this.championshipStarted = championshipStarted;
 	}
 
-	public void shutChampionship(Championship championship) {
-		if (championshipStarted) {
-			this.championshipStarted = false;
-			this.championshipLabel.setText("Campeonato: ");
-			this.model.setRowCount(0);
-
-			JOptionPane.showMessageDialog(null, championship.details());
-			JOptionPane.showMessageDialog(null, "Campeonato Encerrado com sucesso!");
-			return;
-		}
-
-		JOptionPane.showMessageDialog(null, "Não há campeonato iniciado para se encerrar!");
-
+	public void setTotalPlayers(int totalPlayers) {
+		this.totalPlayers = totalPlayers;
 	}
-	
+
+	public void setCurrentRound(Integer round) {
+		this.currentRound = round;
+	}
+
+	public void setChampionshipLabelText(String text) {
+		this.championshipLabel.setText(text);
+	}
+
+	public void setCurrentRoundLabelText(Integer currentRound) {
+		this.roundLabel.setText("Round: " + currentRound + " / " + getTotalRounds());
+	}
+
+	public Integer getTotalRounds() {
+		return this.totalRounds;
+	}
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

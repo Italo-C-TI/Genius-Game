@@ -32,17 +32,21 @@ public class Utils {
     	return dateFormat.format(date);
     }
     
-	public ArrayList<Integer> generateRandomPattern(Integer dificultyGame) {
+	public ArrayList<Integer> generateRandomPattern(Integer currentRound, Integer dificultyGame) {
 		ArrayList<Integer> pattern = new ArrayList<>();
 		Random random = new Random();
 
-		for (int i = 0; i < 4 + dificultyGame; i++) {
-			pattern.add(random.nextInt(3));
+		for (int i = 0; i < currentRound + dificultyGame; i++) {
+			pattern.add(random.nextInt(4));
 		}
 
 		return pattern;
 	}
-    
+	
+	public boolean checkClickedColor(int clickedColor, ArrayList<Integer> pattern, int currentIndex) {
+	    return clickedColor == pattern.get(currentIndex);
+	}
+	
     public void soundButton(String soundName) {
         new Thread(() -> {
     	try {			

@@ -19,8 +19,7 @@ public class Championship {
 		this.players = players;
 		
 	}
-
-
+	
 	public String getId() {
 		return id;
 	}
@@ -41,24 +40,20 @@ public class Championship {
 		return date;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setDate() {
+		this.date = Utils.formatData(new Date());
 	}
 
+	public void cleanChampionship() {
+		this.title = null;
+		this.date = null;
+		this.players = null;
+	}
 
 	public String getPlayersNickName() {
 		StringBuffer allPlayersNickName = new StringBuffer();
 		 for(Player player : players){
 			 allPlayersNickName.append(player.getName() + "\n");
-		 }
-		return allPlayersNickName.toString();
-
-	}
-	
-	public String getTeste() {
-		StringBuffer allPlayersNickName = new StringBuffer();
-		 for(Player player : players){
-			 allPlayersNickName.append(player.toString() + "\n");
 		 }
 		return allPlayersNickName.toString();
 
@@ -72,7 +67,7 @@ public class Championship {
 	
 
 	public String details() {
-		return "Campeonato " + title + " criado no dia " + date + "\n" + getTeste();
+		return "Campeonato " + title + " criado no dia " + date + "\n" + players.toString();
 	}
 
 	public List<Player> getPlayers() {

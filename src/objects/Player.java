@@ -5,8 +5,8 @@ public class Player {
     private String name;
     private String nickname;
     private Integer totalPoints;
-    private Double totalTime;
-    private Double fastestPlayTime;
+    private Integer totalTime;
+    private Integer fastestPlayTime;
 
     
 	public Player(String id,String name,String nickname) {
@@ -15,8 +15,8 @@ public class Player {
 		this.name = name;
 		this.nickname = nickname;
 		this.totalPoints = 0;
-		this.totalTime = 0.0;
-		this.fastestPlayTime = 0.0;
+		this.totalTime = 0;
+		this.fastestPlayTime = 0;
 	}
 	
 	public String getId() {
@@ -47,29 +47,33 @@ public class Player {
 	public void setTotalPoints(Integer totalPoints) {
 		this.totalPoints = totalPoints;
 	}
-	public Double getTotalTime() {
+	public void addPoints(Integer points) {
+		this.totalPoints+= points;
+	}
+	public Integer getTotalTime() {
 		return totalTime;
 	}
-	public void setTotalTime(Double totalTime) {
-		this.totalTime = totalTime;
+	public void setAddTime(Integer time) {
+		this.totalTime+= time;
 	}
-	public Double getFastestPlayTime() {
+	public Integer getFastestPlayTime() {
 		return fastestPlayTime;
 	}
-	public void setFastestPlayTime(Double fastestPlayTime) {
-		this.fastestPlayTime = fastestPlayTime;
+	public void setFastestPlayTime(Integer fastestPlayTime) {
+		if(this.fastestPlayTime == 0 ||  this.fastestPlayTime > fastestPlayTime) {
+			this.fastestPlayTime = fastestPlayTime;
+		}
 	}
 
     
 	@Override
 	public String toString() {
-		return  "------------------------------------------------\n" 
-				+ "nome: " + name + ",\n"
+		return    "nome: " + name + ",\n"
 				+ "apelido: " + nickname + ",\n"
 				+ "pontos: " + totalPoints + ",\n"
-				+ "tempo total: " + totalTime + ",\n"
-				+ "jogada mais rápida: " + fastestPlayTime + "\n"
-				+ "------------------------------------------------";
+				+ "tempo total: " + totalTime + " segundos" + ",\n"
+				+ "jogada mais rápida: " + fastestPlayTime + " segundos" + "\n"
+				+ "------------------------------------------------\n";
 
 	}
 }

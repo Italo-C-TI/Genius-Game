@@ -28,10 +28,9 @@ import javax.swing.JTable;
 public class ChampionshipRegistration extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private List<Player> players = new ArrayList<Player>();
 
 	public ChampionshipRegistration(Championship championship) {
-		List<Player> players = new ArrayList<Player>();
-
 		setResizable(false);
 		setTitle("Novo Campeonato");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -212,6 +211,7 @@ public class ChampionshipRegistration extends JFrame {
 
 					championship.setTitle(titleChampionshipText.getText().trim());
 					championship.setPlayers(players);
+					championship.setDate();
 
 					runOnPlayGeniusScreen(championship);
 					JOptionPane.showMessageDialog(null, championship.toString());
@@ -239,12 +239,13 @@ public class ChampionshipRegistration extends JFrame {
 	private PlayGenius playGenius;
 
 	public void showScreenPlayGenius(PlayGenius playGeniusScreen) {
+		players.clear();
 		this.playGenius = playGeniusScreen;
 		setVisible(true);
 	}
 
 	public void runOnPlayGeniusScreen(Championship championship) {
-		this.playGenius.championshipLabel.setText("Campeonato: " + championship.getTitle());
+		this.playGenius.setChampionshipLabelText("Campeonato: " + championship.getTitle());
 		List<Player> players = championship.getPlayers();
 
 		for (int i = 0; i < players.size(); i++) {
@@ -255,12 +256,16 @@ public class ChampionshipRegistration extends JFrame {
 
 			this.playGenius.model.addRow(row);
 		}
+		this.playGenius.setTotalPlayers(players.size());
 
 	}
 
 	public void starterChampionship() {
 		this.playGenius.setChampionshipStarted(true);
+		this.playGenius.setCurrentRound(1);
+		this.playGenius.setCurrentRoundLabelText(1);
 	}
+	
 
 	public static void main(String[] args, Championship championship) {
 		EventQueue.invokeLater(new Runnable() {
